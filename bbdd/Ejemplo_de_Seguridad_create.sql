@@ -18,7 +18,7 @@ CREATE TABLE mr_group (
 CREATE TABLE mr_group_role (
     group_role_id serial  NOT NULL,
     group_id int  NOT NULL,
-    mr_role_role_id int  NOT NULL,
+    role_id int  NOT NULL,
     status boolean  NOT NULL,
     tx_username varchar(50)  NOT NULL,
     tx_host varchar(50)  NOT NULL,
@@ -101,7 +101,7 @@ ALTER TABLE mr_group_role ADD CONSTRAINT mr_group_role_mr_group
 
 -- Reference: mr_group_role_mr_role (table: mr_group_role)
 ALTER TABLE mr_group_role ADD CONSTRAINT mr_group_role_mr_role
-    FOREIGN KEY (mr_role_role_id)
+    FOREIGN KEY (role_id)
     REFERENCES mr_role (role_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE

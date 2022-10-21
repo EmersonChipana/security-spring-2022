@@ -1,0 +1,5 @@
+### Test Auht
+### Dos opciones:
+### Path Variable http://localhost:7777/api/v1/auth/{userId}
+### Query Parameter http://localhost:7777/api/v1/auth?userId=2 ESTO SE UTILIZA PARA PAGINACIÓN
+GET http://localhost:7777/api/v1/auth/2
