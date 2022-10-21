@@ -12,6 +12,18 @@ public interface MrUserDao {
                 mr_user
             WHERE
                 user_id = #{userId};
+                AND status = true
             """)
     MrUser findByPrimaryKey(Integer userId);
+
+    @Select("""
+            select secret
+            from 
+                mr_user
+            WHERE
+                username = #{username} 
+                AND status = true
+            """)
+    String findByUsernameAndPassword(String username);
+
 }
