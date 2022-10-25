@@ -17,6 +17,11 @@ public class SecurityBl {
         this.mrUserDao = mrUserDao;
     }
 
+    /**
+     * Método realizado para probar la conexión a la BBDD
+     * @param userId
+     * @return
+     */
     public UserDto getUserByPk(Integer userId) {
         MrUser mrUser = mrUserDao.findByPrimaryKey(userId);
         // Transformamos la entidad de Base de Datos
@@ -32,7 +37,7 @@ public class SecurityBl {
      * @return
      */
     public AuthResDto authenticate(AuthReqDto credentials) {
-        AuthResDto result = null;
+        AuthResDto result = new AuthResDto();
         System.out.println("Comenzando proceso de autenticación con: " + credentials);
         String currentPasswordInBCrypt = mrUserDao.findByUsernameAndPassword(credentials.username());
         System.out.println("Se obtuvo la siguiente contraseña de bbdd: " + currentPasswordInBCrypt);
@@ -55,4 +60,5 @@ public class SecurityBl {
         }
         return result;
     }
+
 }

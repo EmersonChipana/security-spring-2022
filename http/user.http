@@ -1,0 +1,10 @@
+### Creamos nuevo usuarios
+
+POST http://localhost:7777/api/v1/user
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "tony",
+  "secret" : "ABCabc123"
+}
