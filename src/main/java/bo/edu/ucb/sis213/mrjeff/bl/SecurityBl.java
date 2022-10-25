@@ -19,6 +19,8 @@ import java.util.List;
 
 @Service
 public class SecurityBl {
+
+    private final static String JWT_SECRET = "TigreCampeon2022";
     private MrUserDao mrUserDao;
 
     private MrRoleDao mrRoleDao;
@@ -51,7 +53,7 @@ public class SecurityBl {
     public AuthResDto authenticate(AuthReqDto credentials) {
         AuthResDto result = new AuthResDto();
         System.out.println("Comenzando proceso de autenticación con: " + credentials);
-        String currentPasswordInBCrypt = mrUserDao.findByUsernameAndPassword(credentials.username());
+        String currentPasswordInBCrypt = mrUserDao.findSecretByUsername(credentials.username());
         System.out.println("Se obtuvo la siguiente contraseña de bbdd: " + currentPasswordInBCrypt);
         // Consulto si los passwords coinciden
         if (currentPasswordInBCrypt != null ) {
@@ -79,12 +81,43 @@ public class SecurityBl {
         return result;
     }
 
+    /** Este metodo valida un token JWT y retorna un MrUser
+     * @param token
+     * @return
+     */
+    public MrUser validateJwtToken(String jwt) {
+        System.out.printf("VAlidando token: " + jwt);
+        MrUser result = null;
+        try {
+            String username = JWT.require(Algorithm.HMAC256(JWT_SECRET))
+                    .build()
+                    .verify(jwt)
+                    .getSubject();
+            result = mrUserDao.findByUsername(username);
+        } catch (Exception exception){
+            throw new RuntimeException("Forbiden the secret and password are wrong.", exception);
+        }
+        return result;
+    }
+
+    /** Este metodo valida un token JWT y luego retorna si contienen o no el rol
+     * @param token
+     * @return
+     */
+    public boolean tokenHasRole(String jwt, String role) {
+        List<String> roles = JWT.require(Algorithm.HMAC256(JWT_SECRET))
+                .build()
+                .verify(jwt)
+                .getClaim("roles").asList(String.class);
+        return roles.contains(role);
+    }
+
     /** Este metodo generea tokens JWT */
     private AuthResDto generateTokenJwt(String subject, int expirationTimeInSeconds, List<String> roles) {
         AuthResDto result = new AuthResDto();
         // Generar el token princpial
         try {
-            Algorithm algorithm = Algorithm.HMAC256("TigreCampeon2022");
+            Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET);
             String token = JWT.create()
                     .withIssuer("ucb")
                     .withSubject(subject)

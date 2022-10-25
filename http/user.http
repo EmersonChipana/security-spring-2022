@@ -3,8 +3,9 @@
 POST http://localhost:7777/api/v1/user
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJscmFtaXJleiIsInJvbGVzIjpbIkNSRUFSX1VTVUFSSU8iXSwiaXNzIjoidWNiIiwicmVmcmVzaCI6ZmFsc2UsImV4cCI6MTY2NjcyNjAxOH0.Bub49o57NHVIFq5-3-f9n6PvaaIz3U4xuRCKS0d1nlQ
 
 {
-  "username": "tony",
+  "username": "mike",
   "secret" : "ABCabc123"
 }

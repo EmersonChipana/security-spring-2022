@@ -7,7 +7,6 @@ import bo.edu.ucb.sis213.mrjeff.dto.AuthResDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 
 public class SecurityBlTest {
 
@@ -20,7 +19,7 @@ public class SecurityBlTest {
         // mrUserDao.findByUsernameAndPassword(credentials.username());
         // Debido a que es prueba unitaria debemos crear el comportamiento de lo que va a hacer el mock
         // Cuando se llame a findByUsernameAndPassword con el argumento "ernestomar"
-        Mockito.when(mrUserDao.findByUsernameAndPassword("ernesto"))
+        Mockito.when(mrUserDao.findSecretByUsername("ernesto"))
                 .thenReturn("$2a$12$So1a4kRWCh9USHBfUgs1NOtwUCNXLFvuSmfccBOLe.rPxsy0.LGC6");
 
         SecurityBl securityBl = new SecurityBl(mrUserDao);

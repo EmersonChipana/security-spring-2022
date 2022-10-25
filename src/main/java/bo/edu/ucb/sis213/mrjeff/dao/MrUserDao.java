@@ -1,6 +1,5 @@
 package bo.edu.ucb.sis213.mrjeff.dao;
 
-import bo.edu.ucb.sis213.mrjeff.dto.CreateUserDto;
 import bo.edu.ucb.sis213.mrjeff.entity.MrUser;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
@@ -19,6 +18,17 @@ public interface MrUserDao {
     MrUser findByPrimaryKey(Integer userId);
 
     @Select("""
+            select user_id, username, secret, status, tx_username,
+                tx_host, tx_date
+            from 
+                mr_user
+            WHERE
+                username = #{username}
+                AND status = true
+            """)
+    MrUser findByUsername(String username);
+
+    @Select("""
             select secret
             from 
                 mr_user
@@ -26,7 +36,7 @@ public interface MrUserDao {
                 username = #{username} 
                 AND status = true
             """)
-    String findByUsernameAndPassword(String username);
+    String findSecretByUsername(String username);
 
     @Insert("""
       INSERT INTO
