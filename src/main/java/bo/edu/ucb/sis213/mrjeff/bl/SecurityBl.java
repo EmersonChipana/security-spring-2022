@@ -1,20 +1,32 @@
 package bo.edu.ucb.sis213.mrjeff.bl;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import bo.edu.ucb.sis213.mrjeff.dao.MrRoleDao;
 import bo.edu.ucb.sis213.mrjeff.dao.MrUserDao;
 import bo.edu.ucb.sis213.mrjeff.dto.AuthReqDto;
 import bo.edu.ucb.sis213.mrjeff.dto.AuthResDto;
 import bo.edu.ucb.sis213.mrjeff.dto.UserDto;
+import bo.edu.ucb.sis213.mrjeff.entity.MrRole;
 import bo.edu.ucb.sis213.mrjeff.entity.MrUser;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class SecurityBl {
     private MrUserDao mrUserDao;
 
+    private MrRoleDao mrRoleDao;
 
-    public SecurityBl(MrUserDao mrUserDao) {
+
+    public SecurityBl(MrUserDao mrUserDao, MrRoleDao mrRoleDao) {
         this.mrUserDao = mrUserDao;
+        this.mrRoleDao = mrRoleDao;
     }
 
     /**
@@ -48,8 +60,14 @@ public class SecurityBl {
             if (bcryptResult.verified) { // Ha sido verificado
                 // Procedo a generar el token
                 System.out.println("Las constraseñas coinciden se genera el token");
-                result.setToken("TEST TOKEN");
-                result.setRefresh("TEST REFRESH TOKEN");
+                // Consultamos los roles que tiene el usuario
+                List<MrRole> roles = mrRoleDao.findRolesByUsername(credentials.username());
+                List<String> rolesAsString = new ArrayList<>();
+                for ( MrRole role : roles) {
+                    rolesAsString.add(role.getName());
+                }
+                result = generateTokenJwt(credentials.username(), 300, rolesAsString);
+
             } else {
                 System.out.println("Las constraseñas no coinciden");
                 throw new RuntimeException("Forbiden the secret and password are wrong.");
@@ -60,5 +78,33 @@ public class SecurityBl {
         }
         return result;
     }
+
+    /** Este metodo generea tokens JWT */
+    private AuthResDto generateTokenJwt(String subject, int expirationTimeInSeconds, List<String> roles) {
+        AuthResDto result = new AuthResDto();
+        // Generar el token princpial
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("TigreCampeon2022");
+            String token = JWT.create()
+                    .withIssuer("ucb")
+                    .withSubject(subject)
+                    .withArrayClaim("roles", roles.toArray(new String[roles.size()]))
+                    .withClaim("refresh", false)
+                    .withExpiresAt(new Date(System.currentTimeMillis() + (expirationTimeInSeconds * 1000)))
+                    .sign(algorithm);
+            result.setToken(token);
+            String refreshToken = JWT.create()
+                    .withIssuer("ucb")
+                    .withSubject(subject)
+                    .withClaim("refresh", true)
+                    .withExpiresAt(new Date(System.currentTimeMillis() + (expirationTimeInSeconds * 1000 * 2)))
+                    .sign(algorithm);
+            result.setRefresh(refreshToken);
+        } catch (JWTCreationException exception){
+            throw new RuntimeException("Error al generar el token", exception);
+        }
+        return result;
+    }
+
 
 }

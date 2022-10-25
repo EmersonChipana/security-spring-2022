@@ -133,3 +133,5 @@ ALTER TABLE mr_user_group ADD CONSTRAINT mr_user_group_mr_user
 
 -- End of file.
 
+-- CONSTRAINT DE UNIOQUE para la tabla mr_user
+ALTER TABLE mr_user ADD CONSTRAINT mr_user_username UNIQUE (username);

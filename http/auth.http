@@ -11,5 +11,5 @@ Accept: application/json
 
 {
   "username": "jperez",
-  "password": "12345678"
+  "password": "ABCabc123"
 }
