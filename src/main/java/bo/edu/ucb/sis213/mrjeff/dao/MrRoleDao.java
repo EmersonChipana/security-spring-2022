@@ -2,9 +2,11 @@ package bo.edu.ucb.sis213.mrjeff.dao;
 
 import bo.edu.ucb.sis213.mrjeff.entity.MrRole;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public interface MrRoleDao {
 
     @Select("""

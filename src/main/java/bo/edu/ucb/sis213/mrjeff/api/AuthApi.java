@@ -21,16 +21,6 @@ public class AuthApi {
     }
 
     /**
-     * Endpoint para probar la busqueda por llave primaria
-     * @param userId
-     * @return
-     */
-    @GetMapping("/{userId}")
-    public UserDto test(@PathVariable(name = "userId") Integer userId) {
-        return this.securityBl.getUserByPk(userId);
-    }
-
-    /**
      * HACERLO ASÍ POR SIMPLICIDAD.
      * @param authReqDto
      * @return

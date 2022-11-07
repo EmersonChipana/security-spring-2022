@@ -9,3 +9,9 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJscmFtaXJle
   "username": "mike",
   "secret" : "ABCabc123"
 }
+
+### Consultamos el usuario authenticado
+GET http://localhost:7777/api/v1/user/
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJscmFtaXJleiIsInJvbGVzIjpbIkNSRUFSX1VTVUFSSU8iXSwiaXNzIjoidWNiIiwicmVmcmVzaCI6ZmFsc2UsImV4cCI6MTY2NzgxNzcyMX0.DOvztRr7Xr0Mk5E5RVeWHxtnT287l1DoxNcKYyuPswY

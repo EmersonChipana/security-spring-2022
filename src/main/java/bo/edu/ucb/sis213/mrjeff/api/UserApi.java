@@ -3,8 +3,11 @@ package bo.edu.ucb.sis213.mrjeff.api;
 import bo.edu.ucb.sis213.mrjeff.bl.SecurityBl;
 import bo.edu.ucb.sis213.mrjeff.bl.UserBl;
 import bo.edu.ucb.sis213.mrjeff.dto.CreateUserDto;
+import bo.edu.ucb.sis213.mrjeff.dto.ResponseDto;
 import bo.edu.ucb.sis213.mrjeff.dto.UserDto;
-import bo.edu.ucb.sis213.mrjeff.entity.MrUser;
+import bo.edu.ucb.sis213.mrjeff.entity.UserPerson;
+import bo.edu.ucb.sis213.mrjeff.util.AuthUtil;
+import bo.edu.ucb.sis213.mrjeff.util.MrJeffException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -21,26 +24,32 @@ public class UserApi {
     }
 
     @PostMapping
-    public Map createUser( @RequestHeader Map<String, String> headers, @RequestBody CreateUserDto createUserDto) {
-        System.out.println("Headers: " + headers);
-        if (headers.get("Authorization") == null && headers.get("authorization") == null ) {
-            return Map.of("message", "No se ha enviado el token de autorización");
-        }
-        // Se acostumbra que cuando se envia el token, se lo envia en el siguiente formato
-        // Authorization: Bearer TOKEN
-        String jwt = "";
-        if (headers.get("Authorization") != null) {
-            jwt = headers.get("Authorization").split(" ")[1];
-        } else {
-            jwt = headers.get("authorization").split(" ")[1];
-        }
-
-        System.out.println("El token enviado es: " + jwt);
-        if (this.securityBl.tokenHasRole(jwt, "CREAR_USUARIO")) {
+    public ResponseDto<String> createUser(@RequestHeader Map<String, String> headers, @RequestBody CreateUserDto createUserDto) {
+        try {
+            String jwt = AuthUtil.getTokenFromHeader(headers);
+            // Si no tiene error, se lanzaraá una excepción
+            AuthUtil.verifyHasRole(jwt, "CREAR_USUARIO"); // Authorization
             userBl.createUser(createUserDto);
-            return Map.of("message", "User created");
-        } else {
-            return Map.of("message", "The user does not have the required role");
+            return new ResponseDto<>("Usuario creado correctamente", null, true);
+        } catch (MrJeffException ex) {
+            return new ResponseDto<>(ex.getMessage(), null, false);
         }
     }
+
+    /**
+     * Endpoint para probar la busqueda por llave primaria
+     * @param userId
+     * @return
+     */
+    @GetMapping("/")
+    public ResponseDto<UserPerson> getUserFromToken(@RequestHeader Map<String, String> headers) {
+        try {
+            String username = AuthUtil.isUserAuthenticated(AuthUtil.getTokenFromHeader(headers));
+            return new ResponseDto<>(this.userBl.findByUsername(username), null, true);
+        }
+        catch (MrJeffException ex) {
+            return new ResponseDto<>(null, ex.getMessage(), false);
+        }
+    }
+
 }

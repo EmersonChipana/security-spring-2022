@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 public class SecurityBl {
 
-    private final static String JWT_SECRET = "TigreCampeon2022";
+    public final static String JWT_SECRET = "TigreCampeon2022";
     private MrUserDao mrUserDao;
 
     private MrRoleDao mrRoleDao;
@@ -69,7 +69,9 @@ public class SecurityBl {
                 for ( MrRole role : roles) {
                     rolesAsString.add(role.getName());
                 }
-                result = generateTokenJwt(credentials.username(), 300, rolesAsString);
+                // Con esto no será necesario refrescar token.
+                // FIXME: Error de seguridad, los tokens deberían ser de corta duración.
+                result = generateTokenJwt(credentials.username(), 30000, rolesAsString);
 
             } else {
                 System.out.println("Las constraseñas no coinciden");
@@ -101,17 +103,6 @@ public class SecurityBl {
         return result;
     }
 
-    /** Este metodo valida un token JWT y luego retorna si contienen o no el rol
-     * @param token
-     * @return
-     */
-    public boolean tokenHasRole(String jwt, String role) {
-        List<String> roles = JWT.require(Algorithm.HMAC256(JWT_SECRET))
-                .build()
-                .verify(jwt)
-                .getClaim("roles").asList(String.class);
-        return roles.contains(role);
-    }
 
     /** Este metodo generea tokens JWT */
     private AuthResDto generateTokenJwt(String subject, int expirationTimeInSeconds, List<String> roles) {

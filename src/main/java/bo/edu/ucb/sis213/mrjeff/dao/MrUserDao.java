@@ -3,7 +3,9 @@ package bo.edu.ucb.sis213.mrjeff.dao;
 import bo.edu.ucb.sis213.mrjeff.entity.MrUser;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface MrUserDao {
 
     @Select("""
