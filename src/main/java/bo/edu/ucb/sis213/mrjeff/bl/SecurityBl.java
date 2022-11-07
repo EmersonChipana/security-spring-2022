@@ -8,6 +8,7 @@ import bo.edu.ucb.sis213.mrjeff.dto.AuthResDto;
 import bo.edu.ucb.sis213.mrjeff.dto.UserDto;
 import bo.edu.ucb.sis213.mrjeff.entity.MrRole;
 import bo.edu.ucb.sis213.mrjeff.entity.MrUser;
+import bo.edu.ucb.sis213.mrjeff.util.MrJeffException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -72,11 +73,11 @@ public class SecurityBl {
 
             } else {
                 System.out.println("Las constraseñas no coinciden");
-                throw new RuntimeException("Forbiden the secret and password are wrong.");
+                throw new MrJeffException("Forbiden the secret and password are wrong.");
             }
         } else {
             System.out.println("Usuario no existente");
-            throw new RuntimeException("Forbiden the secret and password are wrong.");
+            throw new MrJeffException("El usuario y contraseña son incorrectos.");
         }
         return result;
     }
@@ -95,7 +96,7 @@ public class SecurityBl {
                     .getSubject();
             result = mrUserDao.findByUsername(username);
         } catch (Exception exception){
-            throw new RuntimeException("Forbiden the secret and password are wrong.", exception);
+            throw new MrJeffException("El usuario y cotraseña son incorrectos.", exception);
         }
         return result;
     }
@@ -134,7 +135,7 @@ public class SecurityBl {
                     .sign(algorithm);
             result.setRefresh(refreshToken);
         } catch (JWTCreationException exception){
-            throw new RuntimeException("Error al generar el token", exception);
+            throw new MrJeffException("Error al generar el token", exception);
         }
         return result;
     }
