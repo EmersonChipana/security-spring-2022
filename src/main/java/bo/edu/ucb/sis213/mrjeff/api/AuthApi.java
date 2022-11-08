@@ -27,6 +27,11 @@ public class AuthApi {
      */
     @PostMapping()
     public ResponseDto<AuthResDto> authentication(@RequestBody  AuthReqDto authReqDto) {
+        try {
+            Thread.sleep(3000);
+        } catch (Exception ex) {
+            // Do nothing
+        }
         if (authReqDto != null && authReqDto.username() != null && authReqDto.password() != null) {
             // Retorna los tokens, null (porque no hay error), true porque fue exitoso
             try {

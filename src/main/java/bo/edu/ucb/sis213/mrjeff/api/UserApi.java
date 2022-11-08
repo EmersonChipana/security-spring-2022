@@ -44,6 +44,11 @@ public class UserApi {
     @GetMapping("/")
     public ResponseDto<UserPerson> getUserFromToken(@RequestHeader Map<String, String> headers) {
         try {
+            Thread.sleep(3000);
+        } catch (Exception ex) {
+            // Do nothing
+        }
+        try {
             String username = AuthUtil.isUserAuthenticated(AuthUtil.getTokenFromHeader(headers));
             return new ResponseDto<>(this.userBl.findByUsername(username), null, true);
         }
